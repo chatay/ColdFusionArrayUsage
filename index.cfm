@@ -16,6 +16,8 @@
 			
 		<script language="JavaScript">
 			
+			// For each genre, create an array to hold the titles.
+			// Each genre array will be identified by an index
 			<cfset counter = 0>
 			<cfset counterForTime = 0>
 			<cfset counterForTimeTitleId = 0>
@@ -28,24 +30,25 @@
 			
 			<cfset i = 0>
 			
-			
+			// Create the array
 			GenreArray#counter# = new Array();
 						
 			<cfoutput>
 			
 			<cfset i = i + 1>
-			
+			// Populate the array
 			GenreArray#counter#[#i#] = "#Title#";
-			
+			// To use the other parameters in populateTime method, 
+			// SuitableTime and TitleTableTitleId has been added.
 			GenreArray#counter#[#i#]=[]
-			
+			// Populate the array
 			for (var i = 0; i < 1; i++) {
 				  GenreArray#counter#[#i#]=["#Title#","#TitleTableTitleId#","#SuitableTime#"]
 				}
    		    
 			</cfoutput>
 			</cfoutput>
-			
+			<!--By using the group attribute of the cfoutput tag, an array will be created for each genre -->
 			<cfoutput query="GetGenreTitles" group="TimeTitleId">
 				
 				<cfset counterForTime = counterForTime + 1>
@@ -53,7 +56,7 @@
 				<cfset counterForGenreTitleId = counterForGenreTitleId + 1>
 				
 				<cfset j = 0>
-				
+				// Create the array
 				TimeArray#counterForTime# = new Array();
 				TimeTitleIdArray#counterForTimeTitleId# = new Array();
 				GenreTitleIdArray#counterForGenreTitleId# = new Array();
@@ -61,7 +64,7 @@
 				<cfoutput>
 					
 					<cfset j = j + 1>
-					
+					// Populate the array
 					TimeArray#counterForTime#[#j#] = "#SuitableTime#";
 					TimeArray#counterForTime#[#j#] = [];
 					
@@ -75,8 +78,11 @@
 				</cfoutput>
 			
 			</cfoutput>
+			<!-- make them global -->
 			var uniqueItems = [];
 			var titlesIdArray = [];
+			
+			// Function to populate the titles for the genre selected
 			function populateTitles() {
 			// Only process the function if the first item is not selected.
 			var ThisGenre = document.VideoForm.GenreID.selectedIndex;
@@ -88,33 +94,33 @@
 			// Set the length of the titles drop-down
 			// equal to the length of the genre’s array.tamam
 			
-			
-			// Put ‘Select Title’ as the first option in the title drop-down
-			
-			
+			<!--pass the title values to a single array to 
+			remove duplicate values. 
+			In titles.push method "[0]" means just take title values.-->
 			var titles = [];
 			for (i=1; i<eval("GenreArray" + ThisGenre + ".length"); i++) {
 				
 				titles.push(eval("GenreArray" + ThisGenre + "[i]" + "[0]")) 
 				
 			}
-				 titles.splice(0, 0, "null");
-				
-				 uniqueItems = Array.from(new Set(titles));
-				 document.VideoForm.Title.length =
-						eval(uniqueItems.length);
-						
+			<!-- add null value to be able to add select title string -->
+	     	titles.splice(0, 0, "null");
+			<!-- remove duplciate values -->
+			uniqueItems = Array.from(new Set(titles));
+			<!-- set the length of Title column beforehand -->
+		    document.VideoForm.Title.length = eval(uniqueItems.length);
+			<!-- reset the titleIdArray for every title pick up!-->
 			titlesIdArray = [];
+			<!--add the titlesIdArray to use in populateTime. it will match with GenreArray second index
+			will get the timevalue to display in Time box. -->
 			for (i=1; i<eval("GenreArray" + ThisGenre + ".length"); i++) {
 				// ("GenreArray" + 2 + "[" + 1 + "]" + "[" + 1 + "]")
 				titlesIdArray.push(eval("GenreArray" + ThisGenre + "[i]" + "[1]")) 
 				
 			}			
 			
-				 titlesIdArray.splice(0, 0, "null");
-				
-				 titlesIdArray = Array.from(new Set(titlesIdArray));
-						
+		    titlesIdArray.splice(0, 0, "null");
+			
 			var forLoopArray = uniqueArray1(titles);
 			// Loop through the genre’s array and populate the title drop-down.
 			for (i=0; i<eval(uniqueItems.length); i++) {
@@ -161,6 +167,7 @@
 					
 					//we got to find time period related to the titleID
 					var coor2 = ["", titleId];
+					//control whether there is any matching with the titleId 
 					var filledTimeArray = isItemInArray(eval("GenreArray" + thisGenre), coor2);
 					var thisGenre = document.VideoForm.GenreID.selectedIndex;
 					
